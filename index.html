@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- =========================================================
+         PLANTILLA DE “GOOGLE LOGIN” PARA CANIPHISH
+         Uso: sube este archivo como index.html a tu repositorio
+         de GitHub Pages y decláralo como Website Template en
+         CanIPhish.  100 % estático, sin captura de credenciales.
+    ========================================================== -->
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <title>Iniciar sesión – Cuentas de Google</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Estilos mínimos para imitar el aspecto de Google Sign-In -->
+    <style>
+        :root {
+            --card-width: 450px;
+            --google-blue: #1a73e8;
+            --border-color: #dadce0;
+        }
+        * { box-sizing: border-box; font-family: "Roboto", Arial, sans-serif; }
+        body {
+            margin: 0;
+            background: #fff;
+            color: #202124;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 40px;
+            min-height: 100vh;
+        }
+        .card {
+            width: 100%;
+            max-width: var(--card-width);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 48px 40px 36px;
+            text-align: center;
+        }
+        img.logo { width: 75px; margin-bottom: 16px; }
+        h1 { font-size: 24px; font-weight: 400; margin: 0 0 8px; }
+        p.subtitle { font-size: 16px; color: #5f6368; margin: 0 0 24px; }
+        form { display: flex; flex-direction: column; gap: 16px; }
+        input {
+            padding: 14px 12px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+        }
+        input:focus { border-color: var(--google-blue); }
+        button {
+            margin-top: 8px;
+            padding: 10px 24px;
+            font-size: 16px;
+            color: #fff;
+            background: var(--google-blue);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        footer { margin-top: 32px; font-size: 12px; color: #70757a; }
+    </style>
+</head>
+
+<body>
+
+    <div class="card">
+        <img class="logo" src="https://ssl.gstatic.com/accounts/ui/logo_2x.png" alt="Google">
+        <h1>Iniciar sesión</h1>
+        <p class="subtitle">Usa tu cuenta de Google</p>
+
+        <!-- ***************************************************
+             NO SE ENVÍA NINGÚN FORMULARIO REAL.
+             Todo se maneja en el cliente para registrar interacción
+             y luego redirigir a la web educativa.
+        **************************************************** -->
+        <form id="login" onsubmit="signIn(); return false;">
+            <input  type="email"
+                    placeholder="Correo electrónico o teléfono"
+                    autocomplete="off"
+                    required>
+
+            <input  id="pwd"
+                    type="password"
+                    placeholder="Contraseña"
+                    onkeydown="signIn()"
+                    autocomplete="off"
+                    required>
+
+            <button type="submit" onclick="signIn()">Siguiente</button>
+        </form>
+
+        <footer>Esta es una simulación de seguridad – CanIPhish</footer>
+    </div>
+
+    <!-- ============ SNIPPET DE CANIPHISH (NO TOCAR) ============ -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        /* ---------- PERSONALIZA AQUÍ ---------- */
+        const REDIRECT_TO = 'https://learning.authwebmail.com/index';   // Destino tras la interacción
+        /* --------------------------------------- */
+
+        /* Endpoint público de CanIPhish para capturar interacciones */
+        const responseEndpoint =
+          'https://vmb1fx4bod.execute-api.ap-southeast-2.amazonaws.com/interaction-capture';
+
+        /* Evita llamadas duplicadas */
+        let signInCalled = false;
+
+        /* Se invoca cuando el usuario pulsa una tecla en el password
+           o hace clic en el botón "Siguiente" */
+        function signIn () {
+            if (signInCalled) return;
+            signInCalled = true;
+
+            const uri = responseEndpoint + location.search +
+                        '&webClick=true&callback=myCallback';
+
+            $.ajax({
+                url: uri,
+                type: 'GET',
+                dataType: 'jsonp',
+                complete: redirectPage
+            });
+        }
+
+        /* Redirección HARD-CODED; si prefieres lógica dinámica,
+           comenta este location.href y usa el bloque sugerido por
+           CanIPhish (parseQuery, eType, etc.). */
+        function redirectPage () { location.href = REDIRECT_TO; }
+
+        /* Registra la carga de página (Payload Interaction) */
+        $(function () {
+            $.ajax({
+                url: responseEndpoint + location.search,
+                type: 'GET',
+                dataType: 'jsonp'
+            });
+        });
+    </script>
+    <!-- ============ FIN DEL SNIPPET ============ -->
+
+</body>
+</html>
