@@ -133,7 +133,10 @@
         /* Redirección HARD-CODED; si prefieres lógica dinámica,
            comenta este location.href y usa el bloque sugerido por
            CanIPhish (parseQuery, eType, etc.). */
-        function redirectPage () { location.href = REDIRECT_TO; }
+        <!-- NUEVO CÓDIGO QUE SÍ FUNCIONA EN GOOGLE SITES -->
+function redirectPage () {
+  window.open(REDIRECT_TO, '_blank');   // pestaña o ventana nueva
+}
 
         /* Registra la carga de página (Payload Interaction) */
         $(function () {
